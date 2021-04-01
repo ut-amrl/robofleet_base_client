@@ -1,0 +1,19 @@
+cmake_minimum_required(VERSION 3.1.0)
+project(client)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# Qt setup (needs to precede executable)
+set(CMAKE_AUTOMOC on)
+set(CMAKE_AUTORCC on)
+set(CMAKE_AUTOUIC on)
+set(CMAKE_INCLUDE_CURRENT_DIR on)
+find_package(Qt5 COMPONENTS Core WebSockets REQUIRED)
+list(APPEND Libs Qt5::Core Qt5::WebSockets)
+
+add_executable(client src/main.cpp)
+
+add_subdirectory(src)
+include_directories(include)
+
+target_link_libraries(client ${Libs})
