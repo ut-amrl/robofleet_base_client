@@ -66,8 +66,3 @@ class MessageScheduler : public QObject {
     ms->schedule();
   }
 };
-
-// cptr CreateCallback(void * this_pointer) {
-//     MessageScheduler * self = static_cast<MessageScheduler*>(this_pointer);
-//     return &(self->scheduling_callback);
-// }
