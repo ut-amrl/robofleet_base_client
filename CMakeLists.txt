@@ -11,9 +11,10 @@ set(CMAKE_INCLUDE_CURRENT_DIR on)
 find_package(Qt5 COMPONENTS Core WebSockets REQUIRED)
 list(APPEND Libs Qt5::Core Qt5::WebSockets)
 
+INCLUDE_DIRECTORIES(robofleet_client_lib)
+INCLUDE_DIRECTORIES(robofleet_client_lib/include)
+ADD_SUBDIRECTORY(robofleet_client_lib)
 add_executable(client src/main.cpp)
-
 add_subdirectory(src)
-include_directories(include)
 
 target_link_libraries(client ${Libs})
