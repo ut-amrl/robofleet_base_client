@@ -9,12 +9,7 @@
 #include <unordered_map>
 #include <vector>
 #include "MessageSchedulerLib.hpp"
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
-
-// class MessageScheduler;
-// typedef void (MessageScheduler::*cptr)(const QByteArray&);
-// cptr CreateCallback(void * this_pointer);
+#include <functional>
 
 /**
  * @brief Queues messages and schedules them on demand.
@@ -31,7 +26,7 @@ class MessageScheduler : public QObject {
   }
 
   void setupSchedulerLib(uint64_t mq) {
-    boost::function<void(const QByteArray&)> bound_callback(boost::bind(&MessageScheduler::scheduling_callback, this, _1));
+    std::function<void(const QByteArray&)> bound_callback(std::bind(&MessageScheduler::scheduling_callback, this, std::placeholders::_1));
     ms = new MessageSchedulerLib<QByteArray>(mq, bound_callback);
   }
 
