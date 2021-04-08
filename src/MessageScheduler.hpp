@@ -14,8 +14,7 @@
 /**
  * @brief Queues messages and schedules them on demand.
  *
- * Messages are enqueued, and then later scheduled (via the scheduled signal)
- * when schedule() is called.
+ * Wraps the MesssageSchedulerLib in a QT interface, wiring up events as necessary
  */
 class MessageScheduler : public QObject {
   Q_OBJECT;
@@ -44,19 +43,10 @@ class MessageScheduler : public QObject {
     ms->enqueue(topic.toUtf8().constData(), data, priority, no_drop);
   }
 
-  /**
-   * @brief Fire this to indicate that the network is free
-   * Updates the counter for network backpressure
-   */
   void backpressure_update(uint64_t message_index, uint64_t last_ponged_index) {
     ms->backpressure_update(message_index, last_ponged_index);
   }
 
-  /**
-   * @brief Schedule messages now.
-   * Messages flagged as no_drop are sent first, in FIFO fashion.
-   * Then, messages are sent by topic priority.
-   */
   void schedule() {
     ms->schedule();
   }
