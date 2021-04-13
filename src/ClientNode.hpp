@@ -20,17 +20,11 @@ class ClientNode : public QObject {
 
   struct TopicParams {
     double priority;
+    double rate_limit;
     bool no_drop;
   };
 
-  // In a complete client, we expect the following maps to be populated from configuration.
-  // Map from topic name to pair of <last publication time, publication
-  // interval?(sec)>
-  std::unordered_map<
-      std::string,
-      std::pair<
-          std::chrono::time_point<std::chrono::high_resolution_clock>, double>>
-      rate_limits;
+  // In a complete client, we expect the following map to be populated from configuration.
   // Map from topic names to more detailed params like priority, etc.
   std::unordered_map<std::string, TopicParams> topic_params;
 
@@ -48,21 +42,6 @@ class ClientNode : public QObject {
   template <typename T>
   void encode_msg(
       const T& msg, const std::string& msg_type, const std::string& topic) {
-    // check rate limits
-    if (rate_limits.count(topic)) {
-      auto& rate_info = rate_limits[topic];
-      const auto curr_time = std::chrono::high_resolution_clock::now();
-      const auto duration =
-          std::chrono::duration_cast<std::chrono::milliseconds>(
-              curr_time - rate_info.first);
-      const double elapsed_sec = duration.count() / 1000.0;
-
-      if (elapsed_sec > rate_info.second) {
-        rate_info.first = curr_time;
-      } else {
-        return;
-      }
-    }
 
     // encode message
     flatbuffers::FlatBufferBuilder fbb;
@@ -76,12 +55,13 @@ class ClientNode : public QObject {
         QString::fromStdString(topic),
         data,
         params.priority,
+        params.rate_limit,
         params.no_drop);
   }
 
  Q_SIGNALS:
   void message_encoded(
-      const QString& topic, const QByteArray& data, double priority,
+      const QString& topic, const QByteArray& data, double priority, double rate_limit,
       bool no_drop);
 
  public Q_SLOTS:
